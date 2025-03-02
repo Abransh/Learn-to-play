@@ -73,3 +73,37 @@ public:
         setWindowTitle("Guitar Learning App");
         resize(600, 400);
     }
+
+    ~MainWindow() {
+        if (audioCapture && audioCapture->isCapturing()) {
+            audioCapture->stop();
+        }
+    }
+
+    private slots:
+    void startListening() {
+        if (audioCapture) {
+            audioCapture->start();
+        }
+    }
+    
+    void stopListening() {
+        if (audioCapture) {
+            audioCapture->stop();
+        }
+    }
+
+
+    void updateUI() {
+        // Update UI with the latest detected chord and score
+        chordLabel->setText("Detected Chord: " + QString::fromStdString(lastDetectedChord.name));
+        
+        // Color the label based on match quality
+        if (lastDetectedChord.name == targetChord.name) {
+            chordLabel->setStyleSheet("font-size: 24pt; font-weight: bold; color: green;");
+        } else {
+            chordLabel->setStyleSheet("font-size: 24pt; font-weight: bold; color: red;");
+        }
+        
+        scoreLabel->setText(QString("Score: %1%").arg(int(lastScore * 100)));
+    }
