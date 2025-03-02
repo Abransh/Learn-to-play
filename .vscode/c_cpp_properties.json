@@ -6,6 +6,7 @@
                 "${workspaceFolder}/**",
                 "/Users/abranshbaliyan/Downloads/portaudio/include",
                 "/Users/abranshbaliyan/Downloads/eigen-3.4.0",
+                "/Users/abranshbaliyan/Downloads/fftw-3.3.10/api",
             ],
             "defines": [],
             "cStandard": "c17",
