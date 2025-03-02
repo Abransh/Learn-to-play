@@ -67,3 +67,62 @@ bool AudioCapture::start() {
         std::cerr << "Failed to open stream: " << Pa_GetErrorText(err) << std::endl;
         return false;
     }
+
+    err = Pa_StartStream(stream_);
+    if (err != paNoError) {
+        std::cerr << "Failed to start stream: " << Pa_GetErrorText(err) << std::endl;
+        Pa_CloseStream(stream_);
+        stream_ = nullptr;
+        return false;
+    }
+    
+    isCapturing_ = true;
+    return true;
+}
+
+bool AudioCapture::stop() {
+    if (!isCapturing_) {
+        return true; // Not capturing
+    }
+    
+    PaError err = Pa_StopStream(stream_);
+    if (err != paNoError) {
+        std::cerr << "Failed to stop stream: " << Pa_GetErrorText(err) << std::endl;
+        return false;
+    }
+    
+    err = Pa_CloseStream(stream_);
+    if (err != paNoError) {
+        std::cerr << "Failed to close stream: " << Pa_GetErrorText(err) << std::endl;
+        return false;
+    }
+    
+    stream_ = nullptr;
+    isCapturing_ = false;
+    return true;
+}
+
+bool AudioCapture::isCapturing() const {
+    return isCapturing_;
+}
+
+void AudioCapture::setAudioCallback(std::function<void(const float*, size_t)> callback) {
+    audioCallback_ = callback;
+}
+
+int AudioCapture::paCallback(const void* inputBuffer, void* outputBuffer,
+                           unsigned long framesPerBuffer,
+                           const PaStreamCallbackTimeInfo* timeInfo,
+                           PaStreamCallbackFlags statusFlags,
+                           void* userData) {
+    // Cast user data to AudioCapture instance
+    AudioCapture* capture = static_cast<AudioCapture*>(userData);
+    
+    // Call the user-defined callback if available
+    if (capture->audioCallback_) {
+        const float* input = static_cast<const float*>(inputBuffer);
+        capture->audioCallback_(input, framesPerBuffer);
+    }
+    
+    return paContinue;
+}
