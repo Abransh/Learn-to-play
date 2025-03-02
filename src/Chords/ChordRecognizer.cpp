@@ -163,3 +163,37 @@ std::map<std::string, float> ChordRecognizer::calculateChordCorrelations(const s
         // Store correlation value
         correlations[chord.name] = correlation;
     }
+
+    return correlations;
+}
+
+std::vector<int> ChordRecognizer::extractStrongNotes(const std::vector<float>& chromagram, float threshold) {
+    std::vector<int> notes;
+    
+    for (int i = 0; i < 12; i++) {
+        if (chromagram[i] > threshold) {
+            notes.push_back(i);
+        }
+    }
+    
+    return notes;
+}
+
+float ChordRecognizer::compareWithTarget(const Chord& detected, const Chord& target) {
+    if (detected.name == "Unknown") {
+        return 0.0f;
+    }
+    
+    // Count matching notes
+    int matches = 0;
+    for (int note : detected.notes) {
+        if (std::find(target.notes.begin(), target.notes.end(), note) != target.notes.end()) {
+            matches++;
+        }
+    }
+    
+    // Calculate score (percentage of matching notes)
+    float score = (float)matches / std::max(detected.notes.size(), target.notes.size());
+    
+    return score;
+}
