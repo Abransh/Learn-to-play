@@ -3,7 +3,7 @@ Folder Structure
 guitar-learning-app/
 ├── CMakeLists.txt                  # Main CMake file
 ├── src/                            # Source code directory
-│   ├── main.cpp                    # Application entry point
+│   ├── main.cpp                   # Application entry point
 │   ├── audio/                      # Audio processing modules
 │   │   ├── AudioCapture.h          # Audio input interface
 │   │   ├── AudioCapture.cpp        # Audio capture implementation
