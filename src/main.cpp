@@ -44,3 +44,32 @@ public:
         layout->addWidget(scoreLabel);
         layout->addWidget(startButton);
         layout->addWidget(stopButton);
+
+          // Set central widget
+        setCentralWidget(centralWidget);
+        
+        // Initialize audio and chord recognition
+        audioCapture = std::make_unique<AudioCapture>();
+        audioCapture->initialize();
+        
+        chordRecognizer = std::make_unique<ChordRecognizer>();
+        chordRecognizer->initialize();
+        
+        // Set audio callback
+        audioCapture->setAudioCallback([this](const float* buffer, size_t size) {
+            processAudio(buffer, size);
+        });
+
+        // Connect signals and slots
+        connect(startButton, &QPushButton::clicked, this, &MainWindow::startListening);
+        connect(stopButton, &QPushButton::clicked, this, &MainWindow::stopListening);
+        
+        // Setup update timer (update UI 10 times per second)
+        updateTimer = new QTimer(this);
+        connect(updateTimer, &QTimer::timeout, this, &MainWindow::updateUI);
+        updateTimer->start(100);
+        
+        // Window settings
+        setWindowTitle("Guitar Learning App");
+        resize(600, 400);
+    }
