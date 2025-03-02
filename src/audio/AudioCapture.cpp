@@ -18,3 +18,52 @@ AudioCapture::~AudioCapture() {
         Pa_Terminate();
     }
 }
+
+bool AudioCapture::initialize(int sampleRate, int framesPerBuffer) {
+    sampleRate_ = sampleRate;
+    framesPerBuffer_ = framesPerBuffer;
+    
+    PaError err = Pa_Initialize();
+    if (err != paNoError) {
+        std::cerr << "PortAudio initialization failed: " << Pa_GetErrorText(err) << std::endl;
+        return false;
+    }
+    
+    isInitialized_ = true;
+    return true;
+}
+
+bool AudioCapture::start() {
+    if (!isInitialized_) {
+        std::cerr << "Audio system not initialized" << std::endl;
+        return false;
+    }
+    
+    if (isCapturing_) {
+        return true; // Already capturing
+    }
+    
+    PaStreamParameters inputParameters;
+    inputParameters.device = Pa_GetDefaultInputDevice();
+    if (inputParameters.device == paNoDevice) {
+        std::cerr << "No default input device" << std::endl;
+        return false;
+    }
+    inputParameters.channelCount = 1; // Mono
+    inputParameters.sampleFormat = paFloat32;
+    inputParameters.suggestedLatency = Pa_GetDeviceInfo(inputParameters.device)->defaultLowInputLatency;
+    inputParameters.hostApiSpecificStreamInfo = nullptr;
+    
+    PaError err = Pa_OpenStream(&stream_,
+                               &inputParameters,
+                               nullptr, // No output
+                               sampleRate_,
+                               framesPerBuffer_,
+                               paClipOff,
+                               &AudioCapture::paCallback,
+                               this);
+    
+    if (err != paNoError) {
+        std::cerr << "Failed to open stream: " << Pa_GetErrorText(err) << std::endl;
+        return false;
+    }
