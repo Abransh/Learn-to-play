@@ -33,3 +33,30 @@ void ChordRecognizer::initialize() {
             }
             chordLibrary_[chord.name] = chord;
         }
+
+        // For minor chords
+        {
+            Chord chord;
+            chord.name = noteNames[root] + "m";
+            chord.type = "minor";
+            for (int note : chordTemplates_["minor"]) {
+                chord.notes.push_back((root + note) % 12);
+            }
+            chordLibrary_[chord.name] = chord;
+        }
+        
+          // For 7th chords
+        {
+            Chord chord;
+            chord.name = noteNames[root] + "7";
+            chord.type = "7th";
+            for (int note : chordTemplates_["7th"]) {
+                chord.notes.push_back((root + note) % 12);
+            }
+            chordLibrary_[chord.name + "7"] = chord;
+        }
+
+        //any other chord class can be added here, i guess 5th and 9th i should i add but later 
+
+        }
+}
