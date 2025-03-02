@@ -107,3 +107,48 @@ public:
         
         scoreLabel->setText(QString("Score: %1%").arg(int(lastScore * 100)));
     }
+
+    private:
+    QLabel *chordLabel;
+    QLabel *targetChordLabel;
+    QLabel *scoreLabel;
+    QTimer *updateTimer;
+    
+    std::unique_ptr<AudioCapture> audioCapture;
+    std::unique_ptr<ChordRecognizer> chordRecognizer;
+    
+    Chord lastDetectedChord;
+    Chord targetChord;
+    float lastScore = 0.0f;
+    
+    // Process audio data from the microphone
+    void processAudio(const float* buffer, size_t size) {
+        // Skip processing if recognizer is not initialized
+        if (!chordRecognizer) return;
+        
+        // Calculate chromagram from audio buffer
+        std::vector<float> chromagram = chordRecognizer->calculateChromagram(buffer, size);
+        
+        // Recognize chord
+        lastDetectedChord = chordRecognizer->recognizeChord(chromagram);
+        
+        // Compare with target chord and calculate score
+        lastScore = chordRecognizer->compareWithTarget(lastDetectedChord, targetChord);
+    }
+};
+
+
+int main(int argc, char* argv[]) {
+    // Initialize Qt application
+    QApplication app(argc, argv);
+    
+    // Create main window
+    MainWindow mainWindow;
+    mainWindow.show();
+    
+    // Run application event loop
+    return app.exec();
+}
+
+// Required for Qt's meta-object system when using Q_OBJECT
+#include "main.moc"
