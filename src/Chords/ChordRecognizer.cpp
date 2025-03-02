@@ -101,3 +101,65 @@ std::vector<float> ChordRecognizer::calculateChromagram(const float* buffer, siz
         // Add magnitude to chromagram
         chromagram[pitchClass] += magnitudes[i];
     }
+
+    // Normalize chromagram
+    float maxVal = *std::max_element(chromagram.begin(), chromagram.end());
+    if (maxVal > 0) {
+        for (auto& val : chromagram) {
+            val /= maxVal;
+        }
+    }
+
+    // Clean up FFTW resources
+    fftwf_destroy_plan(plan);
+    fftwf_free(in);
+    fftwf_free(out);
+    
+    return chromagram;
+}
+
+Chord ChordRecognizer::recognizeChord(const std::vector<float>& chromagram) {
+    // Calculate correlations with all chord templates
+    auto correlations = calculateChordCorrelations(chromagram);
+    
+    // Find the best matching chord
+    std::string bestChord = "";
+    float bestCorrelation = -1.0f;
+    
+    for (const auto& pair : correlations) {
+        if (pair.second > bestCorrelation) {
+            bestCorrelation = pair.second;
+            bestChord = pair.first;
+        }
+    }
+    
+    // Return the best matching chord or an "unknown" chord if below threshold
+    if (bestCorrelation > 0.6f && !bestChord.empty()) { // Arbitrary threshold
+        return chordLibrary_[bestChord];
+    } else {
+        Chord unknown;
+        unknown.name = "Unknown";
+        unknown.type = "unknown";
+        return unknown;
+    }
+}
+
+
+std::map<std::string, float> ChordRecognizer::calculateChordCorrelations(const std::vector<float>& chromagram) {
+    std::map<std::string, float> correlations;
+    
+    for (const auto& pair : chordLibrary_) {
+        const Chord& chord = pair.second;
+        float correlation = 0.0f;
+        
+        // Simple correlation - sum the chromagram values for the chord notes
+        for (int note : chord.notes) {
+            correlation += chromagram[note];
+        }
+        
+        // Normalize by number of notes in the chord
+        correlation /= chord.notes.size();
+        
+        // Store correlation value
+        correlations[chord.name] = correlation;
+    }
