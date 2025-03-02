@@ -37,3 +37,33 @@ guitar-learning-app/
     ├── TestAudioCapture.cpp
     ├── TestSignalProcessor.cpp
     └── TestChordRecognizer.cpp
+
+
+
+    what to download
+
+    Here's what you'll need to download and install:
+
+Core C++ Development Tools:
+
+CMake (build system): https://cmake.org/download/
+A C++ compiler (GCC, Clang, or MSVC depending on your platform)
+Git for version control: https://git-scm.com/downloads
+
+
+Audio Processing Libraries:
+
+PortAudio for real-time audio input: http://www.portaudio.com/download.html
+FFTW for spectral analysis: http://www.fftw.org/download.html
+
+
+GUI Framework (choose one):
+
+Qt (comprehensive GUI framework): https://www.qt.io/download
+wxWidgets (cross-platform GUI library): https://wxwidgets.org/downloads/
+
+
+Additional Libraries:
+SQLite for song database: https://www.sqlite.org/download.html
+Eigen for matrix operations: https://eigen.tuxfamily.org/index.php?title=Main_Page
+libsndfile for audio file handling: http://www.mega-nerd.com/libsndfile/#Download
