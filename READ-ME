@@ -1,0 +1,39 @@
+Folder Structure
+
+guitar-learning-app/
+├── CMakeLists.txt                  # Main CMake file
+├── src/                            # Source code directory
+│   ├── main.cpp                    # Application entry point
+│   ├── audio/                      # Audio processing modules
+│   │   ├── AudioCapture.h          # Audio input interface
+│   │   ├── AudioCapture.cpp        # Audio capture implementation
+│   │   ├── SignalProcessor.h       # Signal processing interface
+│   │   └── SignalProcessor.cpp     # FFT and chromagram implementation
+│   ├── chord/                      # Chord recognition modules
+│   │   ├── ChordRecognizer.h       # Chord detection interface
+│   │   └── ChordRecognizer.cpp     # Chord detection algorithms
+│   ├── data/                       # Data management modules
+│   │   ├── SongManager.h           # Song database interface
+│   │   └── SongManager.cpp         # Song and chord storage
+│   ├── gui/                        # User interface modules
+│   │   ├── MainFrame.h             # Main window interface
+│   │   ├── MainFrame.cpp           # UI implementation
+│   │   ├── ChordDisplay.h          # Chord visualization component
+│   │   └── ChordDisplay.cpp        # Visual chord representation
+│   └── utils/                      # Utility functions
+│       ├── Constants.h             # Application constants
+│       └── Logger.h                # Logging utilities
+├── resources/                      # Application resources
+│   ├── chords/                     # Chord diagrams and images
+│   │   ├── major/                  # Major chord diagrams
+│   │   ├── minor/                  # Minor chord diagrams
+│   │   └── seventh/                # 7th chord diagrams
+│   └── icons/                      # Application icons
+├── data/                           # Data storage directory
+│   └── songs.db                    # SQLite database for songs
+├── include/                        # Third-party headers
+├── lib/                            # Third-party libraries
+└── test/                           # Test files
+    ├── TestAudioCapture.cpp
+    ├── TestSignalProcessor.cpp
+    └── TestChordRecognizer.cpp
